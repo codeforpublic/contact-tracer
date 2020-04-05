@@ -36,13 +36,11 @@ import com.nuuneoi.lib.contacttracer.R;
 import com.nuuneoi.lib.contacttracer.mock.IUser;
 import com.nuuneoi.lib.contacttracer.mock.User;
 import com.nuuneoi.lib.contacttracer.receiver.BootCompletedReceiver;
-import com.nuuneoi.lib.contacttracer.receiver.NotificationReceiver;
 import com.nuuneoi.lib.contacttracer.utils.BluetoothUtils;
 import com.nuuneoi.lib.contacttracer.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -211,10 +209,6 @@ public class TracerService extends Service {
      * Callers should call stopForeground(true) when background work is complete.
      */
     private void goForeground() {
-        //Intent notificationIntent = new Intent(this, NotificationReceiver.class);
-//        Intent notificationIntent = new Intent(Intent.ACTION_MAIN, null);
-//        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
         Intent notificationIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -222,17 +216,30 @@ public class TracerService extends Service {
 
         String channelId = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            channelId = createNotificationChannel("my_service", "My Background Service");
+            channelId = createNotificationChannel("contact_tracer_service", "Contact Tracer Background Service");
+
+        int icon_id = getResourceId("ic_contact_tracer_noti", "drawable", getPackageName());
+        if (icon_id <= 0)
+            icon_id = R.drawable.ic_contact_tracer_noti_default;
 
         Notification n = new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("Advertising device via Bluetooth")
                 .setContentText("This device is discoverable to others nearby.")
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(icon_id)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
 
         startForeground(FOREGROUND_NOTIFICATION_ID, n);
+    }
+
+    private int getResourceId(String variableName, String resourceName, String packageName)
+    {
+        try {
+            return getResources().getIdentifier(variableName, resourceName, packageName);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
