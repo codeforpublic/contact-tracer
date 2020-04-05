@@ -24,7 +24,6 @@
 
         <receiver
             android:name=".receiver.BootCompletedReceiver"
-            android:process=":remote"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
