@@ -193,6 +193,8 @@ public class TracerService extends Service {
     private void initBluetoothAdvertiser() {
         if (bluetoothAdapter == null)
             return;
+        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
+            return;
         if (bluetoothLeAdvertiser == null) {
             final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
             if (bluetoothManager != null) {
@@ -265,6 +267,9 @@ public class TracerService extends Service {
         if (!BluetoothUtils.isMultipleAdvertisementSupported(bluetoothAdapter))
             return;
 
+        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
+            return;
+
         if (advertiseCallback == null) {
             sendSignalAndLog("Service: Starting Advertising");
 
@@ -283,6 +288,11 @@ public class TracerService extends Service {
      */
     private void stopAdvertising() {
         sendSignalAndLog("Service: Stopping Advertising");
+
+        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
+            advertiseCallback = null;
+            return;
+        }
 
         if (bluetoothLeAdvertiser != null && advertiseCallback != null)
             bluetoothLeAdvertiser.stopAdvertising(advertiseCallback);
@@ -410,6 +420,9 @@ public class TracerService extends Service {
      * Start scanning for BLE Advertisements (& set it up to stop after a set period of time).
      */
     public void startScanning() {
+        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
+            return;
+
         if (scanCallback == null) {
             sendSignalAndLog("Start Scanning");
 
@@ -433,6 +446,11 @@ public class TracerService extends Service {
      */
     public void stopScanning() {
         sendSignalAndLog("Stop Scanning");
+
+        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
+            scanCallback = null;
+            return;
+        }
 
         // Stop the scan, wipe the callback.
         if (bluetoothLeScanner != null && scanCallback != null)
