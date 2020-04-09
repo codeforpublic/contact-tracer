@@ -14,9 +14,4 @@
         <item name="android:windowBackground">@color/app_bg</item>
     </style>
 
-    <!-- Adds the splash screen definition -->
-    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/app_bg</item>
-        <item name="android:background">@drawable/splash_screen</item>        
-    </style>
 </resources>
