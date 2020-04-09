@@ -267,7 +267,7 @@ public class TracerService extends Service {
         if (!BluetoothUtils.isMultipleAdvertisementSupported(bluetoothAdapter))
             return;
 
-        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
+        if (bluetoothAdapter == null || bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
             return;
 
         if (advertiseCallback == null) {
@@ -289,7 +289,7 @@ public class TracerService extends Service {
     private void stopAdvertising() {
         sendSignalAndLog("Service: Stopping Advertising");
 
-        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
+        if (bluetoothAdapter == null || bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
             advertiseCallback = null;
             return;
         }
@@ -420,7 +420,7 @@ public class TracerService extends Service {
      * Start scanning for BLE Advertisements (& set it up to stop after a set period of time).
      */
     public void startScanning() {
-        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
+        if (bluetoothAdapter == null || bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON)
             return;
 
         if (scanCallback == null) {
@@ -447,7 +447,7 @@ public class TracerService extends Service {
     public void stopScanning() {
         sendSignalAndLog("Stop Scanning");
 
-        if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
+        if (bluetoothAdapter == null || bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
             scanCallback = null;
             return;
         }
