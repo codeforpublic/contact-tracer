@@ -28,8 +28,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nuuneoi.lib.contacttracer.R;
@@ -46,6 +48,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class TracerService extends Service {
 
@@ -372,7 +375,7 @@ public class TracerService extends Service {
         Intent failureIntent = new Intent();
         failureIntent.setAction(ADVERTISING_MESSAGE);
         failureIntent.putExtra(ADVERTISING_MESSAGE_EXTRA_MESSAGE, text);
-        sendBroadcast(failureIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(failureIntent);
     }
 
 
@@ -381,7 +384,7 @@ public class TracerService extends Service {
         failureIntent.setAction(NEARBY_DEVICE_FOUND_MESSAGE);
         failureIntent.putExtra(NEARBY_DEVICE_FOUND_EXTRA_NAME, name);
         failureIntent.putExtra(NEARBY_DEVICE_FOUND_EXTRA_RSSI, rssi);
-        sendBroadcast(failureIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(failureIntent);
     }
 
     /*********************
@@ -460,7 +463,7 @@ public class TracerService extends Service {
         List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter.Builder builder = new ScanFilter.Builder();
         // Comment out the below line to see all BLE devices around you
-        builder.setServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this));
+        builder.setServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this), ParcelUuid.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
         scanFilters.add(builder.build());
         return scanFilters;
     }
@@ -482,7 +485,6 @@ public class TracerService extends Service {
             super.onBatchScanResults(results);
             for (ScanResult result : results) {
                 String value = getUserIdFromResult(result);
-
                 sendNearbyDeviceFoundMessage(value, result.getRssi());
             }
         }
@@ -490,7 +492,6 @@ public class TracerService extends Service {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             String value = getUserIdFromResult(result);
-
             sendNearbyDeviceFoundMessage(value, result.getRssi());
         }
         @Override

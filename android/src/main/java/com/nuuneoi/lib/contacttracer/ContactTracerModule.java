@@ -26,6 +26,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class ContactTracerModule extends ReactContextBaseJavaModule implements ActivityEventListener, LifecycleEventListener {
 
@@ -54,10 +55,10 @@ public class ContactTracerModule extends ReactContextBaseJavaModule implements A
         initScannerReceiver();
 
         IntentFilter advertiserMessageFilter = new IntentFilter(TracerService.ADVERTISING_MESSAGE);
-        getReactApplicationContext().registerReceiver(advertiserMessageReceiver, advertiserMessageFilter);
+        LocalBroadcastManager.getInstance(getReactApplicationContext()).registerReceiver(advertiserMessageReceiver, advertiserMessageFilter);
 
         IntentFilter nearbyDeviceFoundFilter = new IntentFilter(TracerService.NEARBY_DEVICE_FOUND_MESSAGE);
-        getReactApplicationContext().registerReceiver(nearbyDeviceFoundReceiver, nearbyDeviceFoundFilter);
+        LocalBroadcastManager.getInstance(getReactApplicationContext()).registerReceiver(nearbyDeviceFoundReceiver, nearbyDeviceFoundFilter);
     }
 
     @NonNull

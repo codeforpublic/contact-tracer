@@ -32,5 +32,6 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
+    compile 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 }
   
