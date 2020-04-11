@@ -35,7 +35,7 @@ RCT_EXPORT_MODULE()
     if (bluetoothUUID == nil)
         bluetoothUUID = @"000086e0-0000-1000-8000-00805f9b34fb";
     
-    NSString *bluetoothDataClass = [bluetoothUUID substringWithRange:NSMakeRange(4, 4)];
+    NSString *bluetoothDataClass = [[bluetoothUUID substringWithRange:NSMakeRange(4, 4)] uppercaseString];
 
     cbuuid = [CBUUID UUIDWithString:bluetoothUUID];
     kDataClass = [CBUUID UUIDWithString:bluetoothDataClass];
