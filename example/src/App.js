@@ -202,12 +202,6 @@ class App extends React.Component {
     this.appendStatusText('***** RSSI: ' + e['rssi']);
     this.appendStatusText('***** Found Nearby Device: ' + e['name']);
     this.appendStatusText('');
-    /* broadcast */
-    console.log('broadcast:' + e['name']);
-    bluetoothScanner.add(e['name']);
-    if (Date.now() - bluetoothScanner.oldestItemTS > 10 * 60 * 1000) {
-      bluetoothScanner.upload();
-    }
   };
 
   /*********

@@ -53,7 +53,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-        <key>contact_tracer_bluetooth_uuid</key>
-        <string>00007fff-0000-1000-8000-00805f9b34fb</string>
+	<key>contact_tracer_bluetooth_uuid</key>
+	<string>00007fff-0000-1000-8000-00805f9b34fb</string>
 </dict>
 </plist>
