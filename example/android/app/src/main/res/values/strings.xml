@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ContactTracerExample</string>
+    <!-- Replace your service UUID here -->
+    <string name="contact_tracer_bluetooth_uuid">00008FFF-0000-1000-8000-00805f9b34fb</string>
 </resources>
