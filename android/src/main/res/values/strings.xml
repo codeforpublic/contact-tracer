@@ -12,5 +12,6 @@
     <string name="location_permission_needed_dialog_content">Location Permission is needed to turn on bluetooth service. Although it is asked for location but we would like to ensure you that there is no specific location like GPS data acquired in this application.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="contact_tracer_bluetooth_uuid">00007fff-0000-1000-8000-00805f9b34fb</string>
 </resources>
 
