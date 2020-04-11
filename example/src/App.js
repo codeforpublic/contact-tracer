@@ -26,6 +26,8 @@ import {setUserId, getUserId} from './User';
 import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 
+const eventEmitter = new NativeEventEmitter(NativeModules.ContactTracerModule);
+
 class App extends React.Component {
   constructor() {
     super();
