@@ -14,11 +14,11 @@ import {
   View,
   Text,
   StatusBar,
+  Switch,
   NativeModules,
   NativeEventEmitter,
   DeviceEventEmitter,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {requestLocationPermission} from './Permission';
@@ -242,10 +242,10 @@ class App extends React.Component {
               </Text>
               <View style={styles.serviceCheckBoxArea}>
                 <Text style={styles.mediumText}>Service:</Text>
-                <CheckBox
+                <Switch
                   value={this.state.serviceEnabled}
                   disabled={!this.state.isLocationPermissionGranted}
-                  onChange={() => this.onServiceCheckBoxChanged()}
+                  onValueChange={() => this.onServiceCheckBoxChanged()}
                 />
               </View>
             </View>
