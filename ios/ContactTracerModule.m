@@ -33,12 +33,10 @@ RCT_EXPORT_MODULE()
     
     NSString *bluetoothUUID = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"contact_tracer_bluetooth_uuid"];
     if (bluetoothUUID == nil)
-        bluetoothUUID = @"000086e1-0000-1000-8000-00805f9b34fb";
+        bluetoothUUID = @"000086e0-0000-1000-8000-00805f9b34fb";
     
-    NSString *bluetoothDataClass = [bluetoothUUID substringWithRange:NSMakeRange(4, 8)];
-   
-    NSLog(@"nuuneoi %@ %@", bluetoothUUID, bluetoothDataClass);
-    
+    NSString *bluetoothDataClass = [bluetoothUUID substringWithRange:NSMakeRange(4, 4)];
+
     cbuuid = [CBUUID UUIDWithString:bluetoothUUID];
     kDataClass = [CBUUID UUIDWithString:bluetoothDataClass];
 
