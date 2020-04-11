@@ -3,6 +3,8 @@ package com.nuuneoi.lib.contacttracer.utils;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.ParcelUuid;
+import android.util.Log;
 
 public class BluetoothUtils {
 
@@ -18,5 +20,11 @@ public class BluetoothUtils {
         return bluetoothAdapter.isMultipleAdvertisementSupported();
     }
 
+    public static ParcelUuid getServiceUUID(Context context) {
+        String uuid = ResourcesUtils.getStringResource(context, "contact_tracer_bluetooth_uuid", context.getPackageName());
+        if (uuid == null)
+            return Constants.DefaultServiceUUID;
+        return ParcelUuid.fromString(uuid);
+    }
 
 }
