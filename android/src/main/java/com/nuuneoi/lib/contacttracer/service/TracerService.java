@@ -37,6 +37,7 @@ import com.nuuneoi.lib.contacttracer.mock.IUser;
 import com.nuuneoi.lib.contacttracer.mock.User;
 import com.nuuneoi.lib.contacttracer.receiver.BootCompletedReceiver;
 import com.nuuneoi.lib.contacttracer.utils.BluetoothUtils;
+import com.nuuneoi.lib.contacttracer.utils.ResourcesUtils;
 import com.nuuneoi.lib.contacttracer.utils.Constants;
 
 import java.util.ArrayList;
@@ -220,7 +221,7 @@ public class TracerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             channelId = createNotificationChannel("contact_tracer_service", "Contact Tracer Background Service");
 
-        int icon_id = getResourceId("ic_contact_tracer_noti", "drawable", getPackageName());
+        int icon_id = ResourcesUtils.getResourceId(TracerService.this, "ic_contact_tracer_noti", "drawable", getPackageName());
         if (icon_id <= 0)
             icon_id = R.drawable.ic_contact_tracer_noti_default;
 
@@ -233,15 +234,6 @@ public class TracerService extends Service {
                 .build();
 
         startForeground(FOREGROUND_NOTIFICATION_ID, n);
-    }
-
-    private int getResourceId(String variableName, String resourceName, String packageName)
-    {
-        try {
-            return getResources().getIdentifier(variableName, resourceName, packageName);
-        } catch (Exception e) {
-            return -1;
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -336,13 +328,13 @@ public class TracerService extends Service {
          */
         String id = user.getUserId();
         AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        dataBuilder.addServiceUuid(Constants.Service_UUID);
+        dataBuilder.addServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this));
         //dataBuilder.setIncludeDeviceName(true);
-        //dataBuilder.addServiceData(Constants.Service_UUID, ByteUtils.intToByteArray(id));
-        dataBuilder.addServiceData(Constants.Service_UUID, id.getBytes());
+        //dataBuilder.addServiceData(BluetoothUtils.getServiceUUID(TracerService.this), ByteUtils.intToByteArray(id));
+        dataBuilder.addServiceData(BluetoothUtils.getServiceUUID(TracerService.this), id.getBytes());
         /* For example - this will cause advertising to fail (exceeds size limit) */
         // String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";
-        // dataBuilder.addServiceData(Constants.Service_UUID, failureData.getBytes());
+        // dataBuilder.addServiceData(BluetoothUtils.getServiceUUID(TracerService.this), failureData.getBytes());
         return dataBuilder.build();
     }
 
@@ -468,7 +460,7 @@ public class TracerService extends Service {
         List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter.Builder builder = new ScanFilter.Builder();
         // Comment out the below line to see all BLE devices around you
-        builder.setServiceUuid(Constants.Service_UUID);
+        builder.setServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this));
         scanFilters.add(builder.build());
         return scanFilters;
     }
@@ -509,7 +501,7 @@ public class TracerService extends Service {
         }
         private String getUserIdFromResult(ScanResult result) {
             String value;
-            byte[] data = result.getScanRecord().getServiceData(Constants.Service_UUID);
+            byte[] data = result.getScanRecord().getServiceData(BluetoothUtils.getServiceUUID(TracerService.this));
 
             if (data != null)
                 value = new String(data);
