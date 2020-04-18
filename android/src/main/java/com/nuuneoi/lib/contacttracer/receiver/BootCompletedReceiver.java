@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.nuuneoi.lib.contacttracer.service.TracerService;
+import com.nuuneoi.lib.contacttracer.utils.ServiceUtils;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
@@ -13,21 +14,10 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         boolean serviceEnabled = TracerService.isEnabled(context);
         if (serviceEnabled) {
-            startAdvertiserService(context);
+            ServiceUtils.startAdvertiserService(context);
         } else {
-            stopAdvertiserService(context);
+            ServiceUtils.stopAdvertiserService(context);
         }
-    }
-
-    private void startAdvertiserService(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            context.startForegroundService(new Intent(context, TracerService.class));
-        else
-            context.startService(new Intent(context, TracerService.class));
-    }
-
-    private void stopAdvertiserService(Context context) {
-        context.stopService(new Intent(context, TracerService.class));
     }
 
 }

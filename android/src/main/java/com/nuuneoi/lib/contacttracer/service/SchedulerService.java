@@ -7,14 +7,16 @@ import android.content.Intent;
 import android.os.Build;
 import android.widget.Toast;
 
+import com.nuuneoi.lib.contacttracer.utils.ServiceUtils;
+
 public class SchedulerService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         boolean serviceEnabled = TracerService.isEnabled(this);
         if (serviceEnabled) {
-            startAdvertiserService(this);
+            ServiceUtils.startAdvertiserService(this);
         } else {
-            stopAdvertiserService(this);
+            ServiceUtils.stopAdvertiserService(this);
         }
 
         return false;
@@ -23,16 +25,5 @@ public class SchedulerService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         return false;
-    }
-
-    private void startAdvertiserService(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            context.startForegroundService(new Intent(context, TracerService.class));
-        else
-            context.startService(new Intent(context, TracerService.class));
-    }
-
-    private void stopAdvertiserService(Context context) {
-        context.stopService(new Intent(context, TracerService.class));
     }
 }
