@@ -7,7 +7,8 @@
 #import <React/RCTEventEmitter.h>
 
 @import CoreBluetooth;
+@import CoreLocation; //Added by Urng 20200712
 
-@interface ContactTracerModule : RCTEventEmitter <RCTBridgeModule, CBCentralManagerDelegate, CBPeripheralManagerDelegate>
+@interface ContactTracerModule : RCTEventEmitter <RCTBridgeModule, CBCentralManagerDelegate, CBPeripheralManagerDelegate, CLLocationManagerDelegate>
 
 @end
