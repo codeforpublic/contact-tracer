@@ -18,6 +18,7 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.ComponentName;
@@ -32,6 +33,7 @@ import android.os.ParcelUuid;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.nuuneoi.lib.contacttracer.R;
@@ -42,8 +44,11 @@ import com.nuuneoi.lib.contacttracer.utils.BluetoothUtils;
 import com.nuuneoi.lib.contacttracer.utils.ResourcesUtils;
 import com.nuuneoi.lib.contacttracer.utils.Constants;
 
+import com.nuuneoi.lib.contacttracer.utils.ParseLeAdvData; // Added by Urng 2020.08.11
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -62,6 +67,14 @@ public class TracerService extends Service {
             "com.nuuneoi.contacttracer.nearbydevicefound_message";
     public static final String NEARBY_DEVICE_FOUND_EXTRA_NAME = "name";
     public static final String NEARBY_DEVICE_FOUND_EXTRA_RSSI = "rssi";
+
+
+    public static final String NEARBY_BEACON_FOUND_MESSAGE =
+            "com.nuuneoi.contacttracer.nearbybeaconfound_message";
+    public static final String NEARBY_BEACON_FOUND_EXTRA_UUID = "uuid";
+    public static final String NEARBY_BEACON_FOUND_EXTRA_MAJOR = "major";
+    public static final String NEARBY_BEACON_FOUND_EXTRA_MINOR = "minor";
+    public static final String NEARBY_BEACON_FOUND_EXTRA_RSSI = "rssi";
 
     // Bluetooth General
     private BluetoothAdapter bluetoothAdapter;
@@ -387,6 +400,16 @@ public class TracerService extends Service {
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(failureIntent);
     }
 
+    private void sendNearbyBeaconFoundMessage(String uuid, String major, String minor, String rssi) {
+        Intent failureIntent = new Intent();
+        failureIntent.setAction(NEARBY_BEACON_FOUND_MESSAGE);
+        failureIntent.putExtra(NEARBY_BEACON_FOUND_EXTRA_UUID, uuid);
+        failureIntent.putExtra(NEARBY_BEACON_FOUND_EXTRA_MAJOR, major);
+        failureIntent.putExtra(NEARBY_BEACON_FOUND_EXTRA_MINOR, minor);
+        failureIntent.putExtra(NEARBY_BEACON_FOUND_EXTRA_RSSI, rssi);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(failureIntent);
+    }
+
     /*********************
      * Bluetooth Scanner *
      *********************/
@@ -462,10 +485,82 @@ public class TracerService extends Service {
     private List<ScanFilter> buildScanFilters() {
         List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter.Builder builder = new ScanFilter.Builder();
-        // Comment out the below line to see all BLE devices around you
-        builder.setServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this), ParcelUuid.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
-        scanFilters.add(builder.build());
+
+//        // Comment out the below line to see all BLE devices around you - This is Other Phone that has MorChana
+//        builder.setServiceUuid(BluetoothUtils.getServiceUUID(TracerService.this), ParcelUuid.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
+//        scanFilters.add(builder.build());
+//
+//
+
+////        // Comment out the below line to see all BLE devices around you - This is iBeacon
+//////        builder.setServiceUuid(ParcelUuid.fromString("26600EFA-ED3D-971A-3676-295C85BE6CE5"), ParcelUuid.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
+//
+//
+//        UUID uuid = UUID.fromString("26600EFA-ED3D-971A-3676-295C85BE6CE5");
+//        final String hex = uuid.toString().replace("-","");;
+//        final int length = hex.length();
+//        final byte[] uuidByteArr = new byte[length / 2];
+//        for (int i = 0; i < length; i += 2)
+//        {
+//            uuidByteArr[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4) + Character.digit(hex.charAt(i+1), 16));
+//        }
+//
+//        final byte[] manufacturerData = new byte[]
+//                {
+//                        0,0,
+//
+//                        // uuid
+//                        0,0,0,0,
+//                        0,0,
+//                        0,0,
+//                        0,0,0,0,0,0,0,0,
+//
+//                        // major
+//                        0,0,
+//
+//                        // minor
+//                        0,0,
+//
+//                        0
+//                };
+//        // the mask tells what bytes in the filter need to match, 1 if it has to match, 0 if not
+//        final byte[] manufacturerDataMask = new byte[]
+//                {
+//                        0,0,
+//
+//                        // uuid
+//                        1,1,1,1,
+//                        1,1,
+//                        1,1,
+//                        1,1,1,1,1,1,1,1,
+//
+//                        // major
+//                        1,1,
+//
+//                        // minor
+//                        1,1,
+//
+//                        0
+//                };
+////        byte[] manufacturerData = ParseLeAdvData.HexToByteArr("000026600EFAED3D971A3676295C85BE6CE50000000000"); //"00 00 26 60 0E FA ED 3D 97 1A 36 76 29 5C 85 BE 6C E5 00 00 00 00 00"
+////        byte[] manufacturerDataMask = ParseLeAdvData.HexToByteArr("0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000"); //"00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF 00 00 00 00 00"
+//
+//        // copy UUID (with no dashes) into data array
+//        System.arraycopy(uuidByteArr, 0, manufacturerData, 2, 16);
+//
+//        // copy major into data array
+//        System.arraycopy(integerToByteArray(0), 0, manufacturerData, 18, 2);
+//
+//        // copy minor into data array
+//        System.arraycopy(integerToByteArray(2), 0, manufacturerData, 20, 2);
+//
+//        int MANUFACTURER_ID = 76;
+//        builder.setManufacturerData( MANUFACTURER_ID,manufacturerData,manufacturerDataMask);
+//        scanFilters.add(builder.build());
+
         return scanFilters;
+
+
     }
     /**
      * Return a {@link ScanSettings} object set to use low power (to preserve battery life).
@@ -476,6 +571,7 @@ public class TracerService extends Service {
         return builder.build();
     }
 
+
     /**
      * Custom ScanCallback object - adds to adapter on success, displays error on failure.
      */
@@ -484,21 +580,77 @@ public class TracerService extends Service {
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
             for (ScanResult result : results) {
-                String value = getUserIdFromResult(result);
-                sendNearbyDeviceFoundMessage(value, result.getRssi());
+                checkScanResult(result);
             }
         }
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            String value = getUserIdFromResult(result);
-            sendNearbyDeviceFoundMessage(value, result.getRssi());
+            checkScanResult(result);
+
         }
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
             //Toast.makeText(TracerService.this, "Scan failed with error: " + errorCode, Toast.LENGTH_LONG)
             //        .show();
+        }
+
+        private void checkScanResult(ScanResult result) {
+            List<ParcelUuid> serviceUuids;
+            ScanRecord record = result.getScanRecord();
+
+//            ParcelUuid DeviceUuid = BluetoothUtils.getServiceUUID(TracerService.this);
+
+//            SparseArray<byte[]> manufacturerData = record.getManufacturerSpecificData();
+//            for(int i = 0; i < manufacturerData.size(); i++){
+//                int manufacturerId = manufacturerData.keyAt(i);
+//                int a = 5;
+//            }
+
+            if (record!=null) {
+
+                serviceUuids = record.getServiceUuids();
+                String deviceName = result.getDevice().getName();
+
+                //Check whether it is Phone(Device) with MorChana App -> [NearbyDeviceFound]
+                //By Checking that ServiceUUID that was advertised is the same value as what we set
+                if (serviceUuids != null) {
+                    ParcelUuid serviceUuid = serviceUuids.get(0);
+                    if (serviceUuid.equals(BluetoothUtils.getServiceUUID(TracerService.this))) {
+                        Log.i("DeviceScanFound", serviceUuid.toString());
+                        String value = getUserIdFromResult(result);
+                        sendNearbyDeviceFoundMessage(value, result.getRssi());
+                        Log.i("BluetoothScanFound", "userID:" + value + " rssi:" + result.getRssi());
+                    }
+                } else {
+                    //Otherwise
+                    //Check if it is "iBeacon" -> [NearbyBeaconFound]
+                    // Is the found ScanResult iBeacon? if yes, the method from iBeacon Manufacturer will
+                    // successfully return the iBeaconInfo [uuid, major, minor, rssi_at_1m]
+                    byte[] buff = result.getScanRecord().getBytes();
+                    if (buff != null && buff.length > 0) {
+                        List<String> iBeaconInfo = ParseLeAdvData.parse_iBeacon_info(buff); // [uuid, major, minor, rssi_at_1m]
+                        if (iBeaconInfo != null) {
+                            if (iBeaconInfo.get(0) != null) {
+                                String uuid = iBeaconInfo.get(0);
+                                String major = iBeaconInfo.get(1);
+                                String minor = iBeaconInfo.get(2);
+                                String rssi_at_1m = iBeaconInfo.get(3);
+
+                                Log.i("BeaconFound", "UUID:" + uuid);
+
+                                if (uuid.equals("26600EFAED3D971A3676295C85BE6CE5")) {
+                                    Log.i("MorChanaBeaconFound", uuid + "." + major + "." + minor + "(" + rssi_at_1m + ")");
+                                    //                                String value2 = getUserIdFromResult(result);
+                                    sendNearbyBeaconFoundMessage(uuid, major, minor, rssi_at_1m);
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
         }
         private String getUserIdFromResult(ScanResult result) {
             String value;
@@ -511,6 +663,8 @@ public class TracerService extends Service {
             return value;
 
         }
+
+
     }
 
     /**
@@ -588,4 +742,12 @@ public class TracerService extends Service {
         editor.apply();
     }
 
+    private static byte[] integerToByteArray(final int value)
+    {
+        final byte[] result = new byte[2];
+        result[0] = (byte) (value / 256);
+        result[1] = (byte) (value % 256);
+
+        return result;
+    }
 }
