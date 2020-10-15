@@ -319,22 +319,19 @@ RCT_EXPORT_METHOD(getUserId: (RCTPromiseResolveBlock)resolve
               inRegion:(CLBeaconRegion*)region //Added by Urng 20200712
 {
     // Beacon found!
-    
-    CLBeacon *foundBeacon = [beacons firstObject];
-    
-    if (foundBeacon) {
-        NSString *uuid = foundBeacon.proximityUUID.UUIDString;
-        NSString *major = [NSString stringWithFormat:@"%@", foundBeacon.major];
-        NSString *minor = [NSString stringWithFormat:@"%@", foundBeacon.minor];
-        
-        NSLog(@"Beacon Found!");
+
+    NSLog(@"Beacon Found!");
+    for (CLBeacon *foundBeacon in beacons) {
         NSLog(@"uuid: %@", uuid);
         NSLog(@"major: %@", major);
         NSLog(@"minor: %@", minor);
+        NSString *uuid = foundBeacon.proximityUUID.UUIDString;
+        NSString *major = [NSString stringWithFormat:@"%@", foundBeacon.major];
+        NSString *minor = [NSString stringWithFormat:@"%@", foundBeacon.minor];
 
         [self emitNearbyBeaconFound: uuid major: major  mainor: minor ];
-    }
-    
+    }    
+    NSLog(@"------------------------------------");
 }
 
 // Advertiser
