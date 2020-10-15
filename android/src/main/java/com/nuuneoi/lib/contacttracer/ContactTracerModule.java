@@ -38,9 +38,11 @@ public class ContactTracerModule extends ReactContextBaseJavaModule implements A
 
     private BroadcastReceiver advertiserMessageReceiver;
     private BroadcastReceiver nearbyDeviceFoundReceiver;
+    private BroadcastReceiver nearbyBeaconFoundReceiver;
 
     private boolean isAdvertiserMessageReceiverRegistered = false;
     private boolean isNearbyDeviceFoundReceiverRegistered = false;
+    private boolean isNearbyBeaconFoundReceiverRegistered = false;
 
     public ContactTracerModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -53,12 +55,16 @@ public class ContactTracerModule extends ReactContextBaseJavaModule implements A
 
         initAdvertiserReceiver();
         initScannerReceiver();
+        initBeaconScanerReceiver();
 
         IntentFilter advertiserMessageFilter = new IntentFilter(TracerService.ADVERTISING_MESSAGE);
         LocalBroadcastManager.getInstance(getReactApplicationContext()).registerReceiver(advertiserMessageReceiver, advertiserMessageFilter);
 
         IntentFilter nearbyDeviceFoundFilter = new IntentFilter(TracerService.NEARBY_DEVICE_FOUND_MESSAGE);
         LocalBroadcastManager.getInstance(getReactApplicationContext()).registerReceiver(nearbyDeviceFoundReceiver, nearbyDeviceFoundFilter);
+
+        IntentFilter nearbyBeaconFoundFilter = new IntentFilter(TracerService.NEARBY_BEACON_FOUND_MESSAGE);
+        LocalBroadcastManager.getInstance(getReactApplicationContext()).registerReceiver(nearbyBeaconFoundReceiver, nearbyBeaconFoundFilter);
     }
 
     @NonNull
@@ -218,6 +224,27 @@ public class ContactTracerModule extends ReactContextBaseJavaModule implements A
 
                 getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit("NearbyDeviceFound", params);
+            }
+        };
+    }
+
+    private void initBeaconScanerReceiver() {
+        nearbyBeaconFoundReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String rssi = intent.getStringExtra(TracerService.NEARBY_BEACON_FOUND_EXTRA_RSSI);
+                String uuid = intent.getStringExtra(TracerService.NEARBY_BEACON_FOUND_EXTRA_UUID);
+                String major = intent.getStringExtra(TracerService.NEARBY_BEACON_FOUND_EXTRA_MAJOR);
+                String minor = intent.getStringExtra(TracerService.NEARBY_BEACON_FOUND_EXTRA_MINOR);
+
+                WritableMap params = Arguments.createMap();
+                params.putString("uuid", uuid);
+                params.putString("major", major);
+                params.putString("minor", minor);
+                params.putString("rssi", rssi);
+
+                getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("NearbyBeaconFound", params);
             }
         };
     }
