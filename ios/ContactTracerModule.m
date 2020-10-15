@@ -322,12 +322,12 @@ RCT_EXPORT_METHOD(getUserId: (RCTPromiseResolveBlock)resolve
 
     NSLog(@"Beacon Found!");
     for (CLBeacon *foundBeacon in beacons) {
-        NSLog(@"uuid: %@", uuid);
-        NSLog(@"major: %@", major);
-        NSLog(@"minor: %@", minor);
         NSString *uuid = foundBeacon.proximityUUID.UUIDString;
         NSString *major = [NSString stringWithFormat:@"%@", foundBeacon.major];
         NSString *minor = [NSString stringWithFormat:@"%@", foundBeacon.minor];
+        NSLog(@"uuid: %@", uuid);
+        NSLog(@"major: %@", major);
+        NSLog(@"minor: %@", minor);
 
         [self emitNearbyBeaconFound: uuid major: major  mainor: minor ];
     }    
