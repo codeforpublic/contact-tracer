@@ -644,7 +644,7 @@ public class TracerService extends Service {
                                 // if (uuid.equals("26600EFAED3D971A3676295C85BE6CE5")) {
                                 //     Log.i("MorChanaBeaconFound", uuid + "." + major + "." + minor + "(" + rssi_at_1m + ")");
                                 //     //                                String value2 = getUserIdFromResult(result);
-                                //     sendNearbyBeaconFoundMessage(uuid, major, minor, rssi_at_1m);
+                                sendNearbyBeaconFoundMessage(uuid, major, minor, rssi_at_1m);
                                 // }
                             }
                         }
